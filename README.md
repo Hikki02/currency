@@ -7,5 +7,8 @@
 #Как запустить проект через Docker
 
 1 С начало нужно установить все зависимости pip install -r requirements.txt
+
+
 2 Потом нужно забилдить проект sudo docker-compose build
+
 3 Осталось просто апнуть проект sudo docker-compose up
