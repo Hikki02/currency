@@ -1,0 +1,57 @@
+
+services:
+  postgres_db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    restart: always
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic
+      --no-input && python manage.py app && gunicorn -b 0.0.0.0:8001 currency.wsgi --reload"
+    volumes:
+      - .:/app
+      - ./static:/static
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres_db
+      - redis
+
+
+
+  redis:
+    image: redis
+    restart: always
+
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A currency worker -l info
+    volumes:
+      - ./:/app/
+    depends_on:
+      - redis
+      - web
+
+  celery-beat:
+    build: .
+    command: celery -A currency beat -l info
+    volumes:
+      - ./:/app/
+    depends_on:
+      - redis
+
+
+volumes:
+  postgres_data:
+
+
