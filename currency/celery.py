@@ -9,10 +9,13 @@ app = Celery('currency')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+app.autodiscover_tasks()
+
 app.conf.beat_schedule = {
-    'every-day': {
+    'every-1-minutes': {
         'task': 'users.tasks.send_a_currency_notification',
-        'schedule': crontab(hour=12, minute=0)
+        'schedule': crontab(minute='*/1')
     }
 }
-app.autodiscover_tasks()
+
+
