@@ -14,7 +14,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'every-1-minutes': {
         'task': 'users.tasks.send_a_currency_notification',
-        'schedule': crontab(minute='*/1')
+        'schedule': crontab(minute='*/60')
     }
 }
 
